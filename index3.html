@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+
+  html, body{
+    height: 100%;
+    width: 100%;
+  }
+
+  #map-canvas { 
+    width: 80%; 
+    height: 400px; 
+    margin: 0; 
+    padding: 0;
+  }
+
+  </style>
+
+  <script type="text/javascript" 
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnaZqKH5XA_aAJ9VB5h3qHvFRre1_TGPg">
+  </script>
+
+  <script type="text/javascript">
+
+  religious = [
+  "bikaner,+india", 
+  "nokha,+india", 
+  "churu,+india", 
+  "jhunjhunu,+india", 
+  "fatehpur,+india", 
+  "alwar,+india", 
+  "tonk,+india", 
+  "rohtak,+india", 
+  "nagaur,+india", 
+  "bikaner,+india"]
+
+  adventure = [
+  "udaipur,+india", 
+  "vadali,+india", 
+  "kota,+india", 
+  "salumbar,+india", 
+  "nimbahera,+india", 
+  "chittorgarh,+india", 
+  "rashmi,+india", 
+  "bhilwara,+india", 
+  "begun,+india", 
+  "pratapgarh,+india"]
+
+  nature = [
+  "jalore,+india", 
+  "dahod,+india", 
+  "godhra,+india", 
+  "banswara,+india", 
+  "fatehpura,+india", 
+  "ratlam,+india", 
+  "jaora,+india", 
+  "kukshi,+india", 
+  "palanpur,+india", 
+  "unjha,+india"]
+
+  places = [religious, adventure, nature];
+
+  var geocoder;
+  var map;
+
+  var bluePushPin = new google.maps.MarkerImage("http://maps.google.com/mapfiles/ms/icons/blue-dot.png");
+  var redPushPin = new google.maps.MarkerImage("http://maps.google.com/mapfiles/ms/icons/red-dot.png");
+  var greenPushPin = new google.maps.MarkerImage("http://maps.google.com/mapfiles/ms/icons/green-dot.png");
+
+  function pausecomp(millis)
+  {
+    var date = new Date();
+    var curDate = null;
+    do { curDate = new Date(); }
+    while(curDate-date < millis);
+    return;
+  }
+
+  function initialize() {
+    geocoder = new google.maps.Geocoder();
+    directionsDisplay = new google.maps.DirectionsRenderer();
+
+    var latlng = new google.maps.LatLng(28.635308, 77.22496000000001);
+
+    var mapOptions = {
+      zoom: 8,
+      center: latlng
+    }
+    map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    dropAllPins();
+  }
+
+  function codeAddress(address) {
+    if(address == undefined)
+      address = document.getElementById("address").value;
+    geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        // map.setCenter(results[0].geometry.location);
+        var marker = new google.maps.Marker({
+          icon: bluePushPin,
+          map: map,
+          animation: google.maps.Animation.DROP,
+          position: results[0].geometry.location
+        });
+        console.log(results[0].geometry.location);
+        return results[0].geometry.location;
+      } else {
+        console.log("Address: " + address + " : unsuccessful: " + status);
+      }
+    });
+  }
+
+  function dropAllPins(){
+    for (i = 0; i < places.length; ++i){
+      // setTimeout(function() { dropTenPins(places[i]); }, 2000);
+      dropTenPins(places[i]);
+      pausecomp(2000);
+    }
+  }
+
+  function dropTenPins(subplaces){
+    for (j = 0; j < subplaces.length; ++j){
+      codeAddress(subplaces[j]);
+    }
+  }
+
+  google.maps.event.addDomListener(window, 'load', initialize);
+  </script>
+</head>
+<body>
+  <div id="map-canvas"></div>
+  <input id="address" type="textbox" value="delhi, india">
+  <input type="button" value="Drop a pin!" onclick="codeAddress()">
+</body>
+</html>
